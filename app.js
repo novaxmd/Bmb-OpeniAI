@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Firebase config
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAxkdSxieSHEIYi2XeY2cbqhfb6075g7mc",
   authDomain: "mymessenger-2cc0b.firebaseapp.com",
@@ -15,31 +15,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Get DOM elements
 const form = document.getElementById("messageForm");
 const status = document.getElementById("status");
 
+// Handle form submit
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const phone = document.getElementById("phone").value.trim();
   const message = document.getElementById("msg").value.trim();
 
+  // Simple validation
   if (!phone || !message) {
     status.innerText = "Jaza namba na ujumbe kwanza!";
+    status.style.color = "red";
     return;
   }
 
   try {
+    // Save message to Firestore
     await addDoc(collection(db, "messages"), {
       phone,
       message,
       time: new Date()
     });
 
-    status.innerText = "Ujumbe umeenda kikamilifu!";
+    // Show success feedback
+    status.innerText = "✅ Ujumbe tayari umetumwa!";
+    status.style.color = "#00ff88";
+
+    // Reset form
     form.reset();
+
   } catch (err) {
-    status.innerText = "Hitilafu: " + err.message;
+    status.innerText = "❌ Hitilafu: " + err.message;
+    status.style.color = "red";
     console.error(err);
   }
 });
